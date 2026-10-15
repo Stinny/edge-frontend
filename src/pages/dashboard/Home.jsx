@@ -4,17 +4,17 @@ import { Users, MapPin, AlertCircle, Clock, BarChart } from 'react-feather';
 const stats = [
   {
     label: 'Total Customers',
-    value: 'TDB',
+    value: 'N/A',
     icon: Users,
   },
   {
     label: 'Total Sites',
-    value: 'TBD',
+    value: 'N/A',
     icon: MapPin,
   },
   {
     label: 'Expired SMAs',
-    value: 'TBD',
+    value: 'N/A',
     icon: AlertCircle,
     highlight: true,
   },

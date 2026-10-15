@@ -298,11 +298,18 @@ export default function SiteDetail() {
           <p className="text-neutral-500 text-sm">
             {site.building ? `${site.building} · ` : ''}{site.siteAddress || 'No address'}
           </p>
-          {site.updatedAt && (
-            <p className="text-xs text-neutral-400 dark:text-neutral-600 mt-1">
-              Updated {new Date(site.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-            </p>
-          )}
+          {site.updatedAt && (() => {
+            const d = new Date(site.updatedAt);
+            const today = new Date();
+            const isToday = d.getFullYear() === today.getFullYear() &&
+              d.getMonth() === today.getMonth() &&
+              d.getDate() === today.getDate();
+            return (
+              <p className="text-xs text-neutral-400 dark:text-neutral-600 mt-1">
+                Updated {isToday ? 'Today' : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+              </p>
+            );
+          })()}
         </div>
         <div className="flex items-center gap-2">
           {site.jaceLicense && (
@@ -314,6 +321,15 @@ export default function SiteDetail() {
               License
             </button>
           )}
+          <a
+            href={`${window.location.origin}/site/${id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white hover:border-neutral-400 dark:hover:border-neutral-600 transition-colors"
+          >
+            <ExternalLink size={14} />
+            Site Info
+          </a>
           {site.sharepointLink && (
             <a
               href={site.sharepointLink}

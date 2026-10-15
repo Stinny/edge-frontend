@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Thermometer } from 'react-feather';
 import Cookies from 'js-cookie';
 import { useLoginMutation } from '../api/authApiSlice';
 import { redirectIfAuthenticated } from '../utils/redirectAuth';
@@ -52,12 +53,10 @@ export default function Login() {
       {/* Top bar */}
       <div className="border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-black px-6 h-16 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2.5">
-          <div className="w-7 h-7 bg-white rounded flex items-center justify-center border border-neutral-200 dark:border-transparent">
-            <svg className="w-4 h-4 text-black" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.93V17a1 1 0 0 1-2 0v-.07A8 8 0 0 1 4.07 11H5a1 1 0 0 1 0 2H4.07A8 8 0 0 1 11 4.07V5a1 1 0 0 1 2 0v.07A8 8 0 0 1 19.93 13H19a1 1 0 0 1 0-2h.93A8 8 0 0 1 13 16.93z"/>
-            </svg>
+          <div className="w-7 h-7 bg-neutral-900 dark:bg-white rounded flex items-center justify-center">
+            <Thermometer size={14} className="text-white dark:text-black" />
           </div>
-          <span className="text-neutral-900 dark:text-white font-semibold tracking-tight text-lg">EdgeAuto</span>
+          <span className="text-neutral-900 dark:text-white font-semibold tracking-tight">Edge Automation</span>
         </Link>
         <Link to="/" className="text-neutral-500 hover:text-neutral-900 dark:hover:text-white text-sm transition-colors">
           ← Back to home
@@ -69,8 +68,8 @@ export default function Login() {
         <div className="w-full max-w-sm">
           <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-8">
             <div className="mb-8">
-              <h1 className="text-xl font-bold text-neutral-900 dark:text-white mb-1">Sign in to EdgeAuto</h1>
-              <p className="text-neutral-500 text-sm">Enter your credentials to access the portal.</p>
+              <h1 className="text-xl font-bold text-neutral-900 dark:text-white mb-1">Sign In</h1>
+              <p className="text-neutral-500 text-sm">Enter your credentials to access the database.</p>
             </div>
 
             {error && (
@@ -87,7 +86,7 @@ export default function Login() {
                 <input
                   id="email"
                   type="email"
-                  autoComplete="email"
+                  autoComplete="off"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@company.com"
@@ -103,7 +102,7 @@ export default function Login() {
                   <input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
-                    autoComplete="current-password"
+                    autoComplete="new-password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"

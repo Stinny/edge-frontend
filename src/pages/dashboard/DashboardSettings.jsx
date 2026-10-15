@@ -204,6 +204,9 @@ export default function DashboardSettings() {
           <SettingRow label="Email" value={currentUser?.email} />
           <SettingRow label="Role" value={currentUser?.role} />
         </Section>
+        <p className="text-xs text-neutral-400 dark:text-neutral-600 -mt-4 px-1">
+          Email and role managed by admin.
+        </p>
 
         {/* Appearance */}
         <Section title="Appearance" icon={theme === 'dark' ? Moon : Sun}>
@@ -290,6 +293,11 @@ export default function DashboardSettings() {
             </div>
           </form>
         </Section>
+
+        {/* Coming soon */}
+        <div className="bg-white dark:bg-neutral-900 border border-dashed border-neutral-200 dark:border-neutral-800 rounded-xl px-5 py-10 flex items-center justify-center">
+          <span className="text-sm text-neutral-400 dark:text-neutral-600">More on the way!</span>
+        </div>
 
       </div>
     </main>

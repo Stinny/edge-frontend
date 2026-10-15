@@ -1,0 +1,139 @@
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Thermometer } from 'react-feather';
+import Cookies from 'js-cookie';
+import { useLoginMutation } from '../../api/authApiSlice';
+import { redirectIfAuthenticated } from '../../utils/redirectAuth';
+
+export default function LoginMobile() {
+  const navigate = useNavigate();
+  redirectIfAuthenticated();
+
+  const [login, { isLoading }] = useLoginMutation();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => { setError(''); }, [email, password]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!email.trim() || !password.trim()) { setError('Email and password are required'); return; }
+    try {
+      const result = await login({ email, pass: password, rememberMe }).unwrap();
+      if (result?.msg === 'Success') {
+        const cookieOpts = rememberMe ? { sameSite: 'Lax', expires: 30 } : { sameSite: 'Lax' };
+        Cookies.set('currentUser', JSON.stringify(result.userInfo), cookieOpts);
+        Cookies.set('aToken', result.accessToken, cookieOpts);
+        Cookies.set('rToken', result.refreshToken, cookieOpts);
+        navigate('/dashboard');
+      }
+    } catch (err) {
+      if (!err?.status) setError('Server not responding');
+      else if (err.status === 400) setError(err?.data?.msg || 'Invalid credentials');
+      else setError('Login failed');
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-neutral-950 flex flex-col">
+      <div className="border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-black px-5 h-14 flex items-center">
+        <Link to="/" className="flex items-center gap-2">
+          <div className="w-7 h-7 bg-neutral-900 dark:bg-white rounded flex items-center justify-center">
+            <Thermometer size={14} className="text-white dark:text-black" />
+          </div>
+          <span className="text-neutral-900 dark:text-white font-semibold tracking-tight text-sm">Edge Automation</span>
+        </Link>
+      </div>
+
+      <div className="flex-1 flex items-center justify-center px-5 py-8">
+        <div className="w-full max-w-sm">
+          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6">
+            <div className="mb-6">
+              <h1 className="text-xl font-bold text-neutral-900 dark:text-white mb-1">Sign In</h1>
+              <p className="text-neutral-500 text-sm">Enter your credentials to continue.</p>
+            </div>
+
+            {error && (
+              <div className="mb-4 px-3 py-2.5 rounded-lg bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800/50 text-red-600 dark:text-red-400 text-sm">
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-medium text-neutral-500 dark:text-neutral-400 mb-1.5 uppercase tracking-wider">
+                  Email address
+                </label>
+                <input
+                  type="email"
+                  autoComplete="off"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@company.com"
+                  className="w-full bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-lg px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:border-neutral-500 focus:ring-1 focus:ring-neutral-500 transition-colors"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-neutral-500 dark:text-neutral-400 mb-1.5 uppercase tracking-wider">
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    autoComplete="new-password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-lg px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:border-neutral-500 focus:ring-1 focus:ring-neutral-500 transition-colors pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400"
+                  >
+                    {showPassword ? (
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
+                      </svg>
+                    ) : (
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              <label className="flex items-center gap-2.5 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="w-4 h-4 rounded border-neutral-300 dark:border-neutral-600 accent-neutral-900 dark:accent-white cursor-pointer"
+                />
+                <span className="text-sm text-neutral-500 dark:text-neutral-400">Remember me</span>
+              </label>
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full py-3 bg-neutral-900 dark:bg-white text-white dark:text-black font-semibold rounded-lg text-sm disabled:opacity-50"
+              >
+                {isLoading ? 'Signing in…' : 'Sign In'}
+              </button>
+            </form>
+          </div>
+
+          <p className="text-center text-xs text-neutral-400 dark:text-neutral-600 mt-5">
+            Need access? <span className="text-neutral-500">Contact your administrator.</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
