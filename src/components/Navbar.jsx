@@ -12,7 +12,10 @@ export default function Navbar() {
               <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.93V17a1 1 0 0 1-2 0v-.07A8 8 0 0 1 4.07 11H5a1 1 0 0 1 0 2H4.07A8 8 0 0 1 11 4.07V5a1 1 0 0 1 2 0v.07A8 8 0 0 1 19.93 13H19a1 1 0 0 1 0-2h.93A8 8 0 0 1 13 16.93z"/>
             </svg>
           </div>
-          <span className="text-neutral-900 dark:text-white font-semibold tracking-tight text-lg">EdgeAuto</span>
+          <div className="flex flex-col">
+            <span className="text-neutral-900 dark:text-white font-semibold tracking-tight leading-tight">EdgeAuto</span>
+            <span className="text-xs text-neutral-400 dark:text-neutral-600 leading-tight">Site Information DB</span>
+          </div>
         </Link>
 
         <nav className="flex items-center gap-1">

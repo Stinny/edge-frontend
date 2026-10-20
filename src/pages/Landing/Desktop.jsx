@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Thermometer } from 'react-feather'
+import { FileText } from 'react-feather'
 
 const features = [
   {
@@ -47,10 +47,11 @@ export default function Landing() {
       {/* Nav */}
       <header className="shrink-0 flex items-center justify-between px-8 h-16 border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-black">
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 bg-neutral-900 dark:bg-white rounded flex items-center justify-center shrink-0">
-            <Thermometer size={14} className="text-white dark:text-black" />
+          <FileText size={22} className="text-neutral-900 dark:text-white shrink-0" />
+          <div className="flex flex-col">
+            <span className="text-neutral-900 dark:text-white font-semibold tracking-tight leading-tight">Edge Automation</span>
+            <span className="text-xs text-neutral-400 dark:text-neutral-600 leading-tight">Site Information DB</span>
           </div>
-          <span className="text-neutral-900 dark:text-white font-semibold tracking-tight">Edge Automation</span>
         </div>
         <Link
           to="/login"

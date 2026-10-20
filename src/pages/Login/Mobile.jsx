@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Thermometer } from 'react-feather';
+import { FileText } from 'react-feather';
 import Cookies from 'js-cookie';
 import { useLoginMutation } from '../../api/authApiSlice';
 import { redirectIfAuthenticated } from '../../utils/redirectAuth';
@@ -41,9 +41,7 @@ export default function LoginMobile() {
     <div className="min-h-screen bg-gray-50 dark:bg-neutral-950 flex flex-col">
       <div className="border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-black px-5 h-14 flex items-center">
         <Link to="/" className="flex items-center gap-2">
-          <div className="w-7 h-7 bg-neutral-900 dark:bg-white rounded flex items-center justify-center">
-            <Thermometer size={14} className="text-white dark:text-black" />
-          </div>
+          <FileText size={22} className="text-neutral-900 dark:text-white shrink-0" />
           <span className="text-neutral-900 dark:text-white font-semibold tracking-tight text-sm">Edge Automation</span>
         </Link>
       </div>

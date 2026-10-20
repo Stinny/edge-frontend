@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { Home, Map, Settings, LogOut, Sun, Moon, Thermometer, Star } from 'react-feather';
+import { Home, Map, Settings, LogOut, Sun, Moon, FileText, Star } from 'react-feather';
 import { isMobile } from 'react-device-detect';
 import Cookies from 'js-cookie';
 import { useTheme } from '../context/ThemeContext';
@@ -65,9 +65,7 @@ export default function DashboardLayout() {
         {/* Top bar */}
         <header className="fixed top-0 left-0 right-0 h-14 bg-white dark:bg-black border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between px-4 z-50">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-neutral-900 dark:bg-white rounded flex items-center justify-center shrink-0">
-              <Thermometer size={14} className="text-white dark:text-black" />
-            </div>
+            <FileText size={22} className="text-neutral-900 dark:text-white shrink-0" />
             <span className="text-neutral-900 dark:text-white font-semibold tracking-tight text-sm">Edge Automation</span>
           </div>
 
@@ -142,9 +140,7 @@ export default function DashboardLayout() {
     <div className="flex min-h-screen bg-gray-50 dark:bg-neutral-950">
       <aside className="w-56 shrink-0 flex flex-col border-r border-neutral-200 dark:border-neutral-800 bg-white dark:bg-black fixed top-0 left-0 h-screen">
         <div className="h-16 flex items-center gap-2.5 px-4 border-b border-neutral-200 dark:border-neutral-800">
-          <div className="w-7 h-7 bg-neutral-900 dark:bg-white rounded flex items-center justify-center shrink-0">
-            <Thermometer size={14} className="text-white dark:text-black" />
-          </div>
+          <FileText size={22} className="text-neutral-900 dark:text-white shrink-0" />
           <div className="flex flex-col">
             <span className="text-neutral-900 dark:text-white font-semibold tracking-tight leading-tight">Edge Automation</span>
             <span className="text-xs text-neutral-400 dark:text-neutral-600 leading-tight">Site Information DB</span>

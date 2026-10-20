@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Search, X, MapPin, AlertCircle, ChevronLeft, ChevronRight, List, Grid } from 'react-feather';
-import { useGetSitesQuery } from '../../../api/sitesApiSlice';
+import { Search, X, MapPin, AlertCircle, ChevronLeft, ChevronRight, List, Grid, Plus } from 'react-feather';
+import { useGetSitesQuery, useCreateSiteMutation } from '../../../api/sitesApiSlice';
 
 const SEARCH_KEYS = ['customer', 'building', 'equipName', 'equipType', 'vendor', 'siteAddress'];
 const PER_PAGE = 16;
@@ -36,6 +36,26 @@ export default function Sites() {
     setViewMode(mode);
     localStorage.setItem('sitesView', mode);
   };
+  const [modalOpen, setModalOpen] = useState(false);
+  const [form, setForm] = useState({ customer: '', building: '', siteAddress: '' });
+  const [formError, setFormError] = useState('');
+  const [createSite, { isLoading: creating }] = useCreateSiteMutation();
+
+  const openModal = () => { setForm({ customer: '', building: '', siteAddress: '' }); setFormError(''); setModalOpen(true); };
+  const closeModal = () => setModalOpen(false);
+
+  const handleCreate = async (e) => {
+    e.preventDefault();
+    if (!form.customer.trim()) { setFormError('Customer name is required'); return; }
+    try {
+      const site = await createSite(form).unwrap();
+      closeModal();
+      navigate(`/dashboard/sites/${site._id}`);
+    } catch {
+      setFormError('Failed to create site');
+    }
+  };
+
   const { data: sites = [], isLoading, isError } = useGetSitesQuery();
 
   const filtered = useMemo(() => {
@@ -69,24 +89,32 @@ export default function Sites() {
 
       {/* Search + view toggle */}
       <div className="flex items-center justify-between mb-4">
-        <div className="relative max-w-sm w-full">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-neutral-500 pointer-events-none" />
-          <input
-            type="text"
-            placeholder="Search by customer, building, equipment…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg pl-9 pr-9 py-2 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-600 focus:outline-none focus:border-neutral-400 dark:focus:border-neutral-600 transition-colors"
-          />
-          {search && (
-            <button
-              onClick={() => setSearch('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 transition-colors"
-              aria-label="Clear search"
-            >
-              <X size={13} />
-            </button>
-          )}
+        <div className="flex items-center gap-2 flex-1 min-w-0 mr-3">
+          <div className="relative max-w-sm w-full">
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-neutral-500 pointer-events-none" />
+            <input
+              type="text"
+              placeholder="Search by customer, building, equipment…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg pl-9 pr-9 py-2 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-600 focus:outline-none focus:border-neutral-400 dark:focus:border-neutral-600 transition-colors"
+            />
+            {search && (
+              <button
+                onClick={() => setSearch('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 transition-colors"
+                aria-label="Clear search"
+              >
+                <X size={13} />
+              </button>
+            )}
+          </div>
+          <button
+            onClick={openModal}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-neutral-900 dark:bg-white text-white dark:text-black hover:bg-neutral-700 dark:hover:bg-neutral-200 transition-colors shrink-0"
+          >
+            <Plus size={13} /> New Site
+          </button>
         </div>
 
         <div className="flex items-center bg-neutral-100 dark:bg-neutral-800 rounded-lg p-0.5 ml-3 shrink-0">
@@ -236,6 +264,53 @@ export default function Sites() {
             </div>
           )}
         </>
+      )}
+      {modalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 dark:bg-black/60">
+          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl shadow-xl w-full max-w-md">
+            <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-neutral-100 dark:border-neutral-800">
+              <h2 className="text-base font-semibold text-neutral-900 dark:text-white">New Site</h2>
+              <button onClick={closeModal} className="p-1.5 rounded-lg text-neutral-400 hover:text-neutral-700 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
+                <X size={15} />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreate} className="p-6 flex flex-col gap-4">
+              {formError && (
+                <p className="text-xs text-red-500 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800/50 rounded-lg px-3 py-2">
+                  {formError}
+                </p>
+              )}
+              {[
+                { key: 'customer', label: 'Customer Name', placeholder: 'Acme Corp' },
+                { key: 'building', label: 'Building', placeholder: 'Main Office' },
+                { key: 'siteAddress', label: 'Site Address', placeholder: '123 Main St, City, State' },
+              ].map(({ key, label, placeholder }) => (
+                <div key={key} className="flex flex-col gap-1.5">
+                  <label className="text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                    {label}{key === 'customer' && <span className="text-red-400 ml-0.5">*</span>}
+                  </label>
+                  <input
+                    type="text"
+                    value={form[key]}
+                    onChange={(e) => { setForm((p) => ({ ...p, [key]: e.target.value })); setFormError(''); }}
+                    placeholder={placeholder}
+                    className="bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-lg px-4 py-2.5 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-600 focus:outline-none focus:border-neutral-500 focus:ring-1 focus:ring-neutral-500 transition-colors"
+                  />
+                </div>
+              ))}
+
+              <div className="flex items-center justify-end gap-2 pt-2">
+                <button type="button" onClick={closeModal} className="px-4 py-2 rounded-lg text-sm text-neutral-500 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
+                  Cancel
+                </button>
+                <button type="submit" disabled={creating} className="px-4 py-2 rounded-lg text-sm font-medium bg-neutral-900 dark:bg-white text-white dark:text-black hover:bg-neutral-700 dark:hover:bg-neutral-200 transition-colors disabled:opacity-50">
+                  {creating ? 'Creating…' : 'Create Site'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </main>
   );
